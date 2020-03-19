@@ -127,6 +127,11 @@ func (r *Request) Fail(e Error) {
 	r.respond(e.code, "Fail", "application/json", string(b))
 }
 
+func (r *Request) Stream(in io.Reader) {
+	r.w.WriteHeader(200)
+	io.Copy(r.w, in)
+}
+
 //Payload unmarshals the JSON body of this request into the given interface.
 // Returns true if successful and false otherwise.
 func (r *Request) Payload(v interface{}) bool {
