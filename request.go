@@ -53,6 +53,10 @@ func (r *Request) Done() bool {
 	return len(r.bt) > 0
 }
 
+func (r *Request) Header() http.Header {
+	return r.w.Header()
+}
+
 func (r *Request) respond(code int, fn, typ, msg string) {
 	/* have we already responded for this request? */
 	if r.Done() {
