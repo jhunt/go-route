@@ -14,6 +14,7 @@ type route struct {
 }
 
 type Router struct {
+	Name   string
 	Debug  bool
 	routes []route
 }
@@ -42,5 +43,9 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	request.Fail(NotFound(nil, "SHIELD API endpoint `%s' not found", request))
+	name := r.Name
+	if name != "" {
+		name = name + " "
+	}
+	request.Fail(NotFound(nil, name+"API endpoint `%s' not found", request))
 }
