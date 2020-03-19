@@ -129,6 +129,7 @@ func (r *Request) Fail(e Error) {
 
 func (r *Request) Stream(in io.Reader) {
 	r.w.WriteHeader(200)
+	r.bt = append(r.bt, "Stream")
 	io.Copy(r.w, in)
 }
 
