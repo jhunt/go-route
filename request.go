@@ -1,9 +1,11 @@
 package route
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"regexp"
 	"time"
@@ -15,6 +17,7 @@ type Request struct {
 	Req  *http.Request
 	Args []string
 
+	xrm   string
 	w     http.ResponseWriter
 	debug bool
 	bt    []string
@@ -25,13 +28,22 @@ type Request struct {
 func NewRequest(w http.ResponseWriter, r *http.Request, debug bool) *Request {
 	return &Request{
 		Req:   r,
+		xrm:   meditate(),
 		w:     w,
 		debug: debug,
 	}
 }
 
+func (r *Request) Meditation() string {
+	return r.xrm
+}
+
 func (r *Request) String() string {
-	return fmt.Sprintf("%s %s", r.Req.Method, r.Req.URL.Path)
+	if r.xrm == "" {
+		return fmt.Sprintf("%s %s", r.Req.Method, r.Req.URL.Path)
+	} else {
+		return fmt.Sprintf("%s %s (meditation:%s)", r.Req.Method, r.Req.URL.Path, r.xrm)
+	}
 }
 
 func (r *Request) RemoteIP() string {
@@ -65,6 +77,7 @@ func (r *Request) respond(code int, fn, typ, msg string) {
 	}
 
 	/* respond ... */
+	r.w.Header().Set("X-Route-Meditation", r.xrm)
 	r.w.Header().Set("Content-Type", typ)
 	r.w.WriteHeader(code)
 	fmt.Fprintf(r.w, "%s\n", msg)
@@ -210,4 +223,12 @@ func (r *Request) Missing(params ...string) bool {
 	}
 
 	return false
+}
+
+func meditate() string {
+	b := make([]byte, 12)
+	if n, err := rand.Read(b); err != nil || n != 12 {
+		return ""
+	}
+	return base64.URLEncoding.EncodeToString(b)
 }
