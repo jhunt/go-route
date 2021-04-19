@@ -31,7 +31,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	for _, rt := range r.routes {
 		if args, ok := rt.matcher(req); ok {
-			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 			request.Args = args
 			rt.handler(request)
