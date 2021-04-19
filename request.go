@@ -119,7 +119,7 @@ func (r *Request) OK(resp interface{}) {
 		return
 	}
 
-	r.respond(200, "OK", "application/json", string(b))
+	r.respond(200, "OK", "application/json; charset=UTF-8", string(b))
 }
 
 func (r *Request) Fail(e Error) {
@@ -137,7 +137,7 @@ func (r *Request) Fail(e Error) {
 		return
 	}
 
-	r.respond(e.code, "Fail", "application/json", string(b))
+	r.respond(e.code, "Fail", "application/json; charset=UTF-8", string(b))
 }
 
 func (r *Request) Stream(in io.Reader) {
